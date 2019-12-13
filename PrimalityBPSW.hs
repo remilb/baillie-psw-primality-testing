@@ -6,13 +6,13 @@ where
 import           Data.List
 
 smallPrimes :: [Integer]
-smallPrimes = filter isPrime [1 .. 1000]
+smallPrimes = filter isPrimeTrialDiv [1 .. 1000]
 
 
-isPrime :: (Integral a) => a -> Bool
-isPrime 0 = False
-isPrime 1 = False
-isPrime n = primes !! fromIntegral n
+isPrimeTrialDiv :: (Integral a) => a -> Bool
+isPrimeTrialDiv 0 = False
+isPrimeTrialDiv 1 = False
+isPrimeTrialDiv n = primes !! fromIntegral n
   where
     primes = [False, False] ++ map primetest [2 ..]
     primetest m =
