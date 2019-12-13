@@ -10,4 +10,5 @@ Big props to Robert Baillie, Carl Pomerance, John Selfridge, and Samuel Wagstaff
 Additional background for those interested:
 * http://mpqs.free.fr/LucasPseudoprimes.pdf
 * https://math.dartmouth.edu/~carlp/PDF/paper25.pdf
+* https://math.dartmouth.edu/~carlp/dopo.pdf
 * https://en.wikipedia.org/wiki/Baillie%E2%80%93PSW_primality_test
