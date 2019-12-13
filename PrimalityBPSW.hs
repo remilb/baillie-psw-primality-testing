@@ -8,7 +8,7 @@ import           Data.List
 smallPrimes :: [Integer]
 smallPrimes = filter isPrimeTrialDiv [1 .. 1000]
 
-
+-- |Trial division primality testing for precomputing small primes
 isPrimeTrialDiv :: (Integral a) => a -> Bool
 isPrimeTrialDiv 0 = False
 isPrimeTrialDiv 1 = False
@@ -18,7 +18,7 @@ isPrimeTrialDiv n = primes !! fromIntegral n
     primetest m =
         not . any (== 0) $ map (rem m) [2 .. floor . sqrt $ fromIntegral m]
 
-
+-- |Baillie-PSW probable prime test
 isPrimeBPSW :: Integer -> Bool
 isPrimeBPSW 0 = False
 isPrimeBPSW 1 = False
@@ -38,7 +38,7 @@ isPrimeBPSW n
     isSmallPrime  = n <= maxSmallPrime && elem n smallPrimes
     maxSmallPrime = maximum smallPrimes
 
-
+-- |A strong base-2 Fermat probable prime test, see Fermat's little theorem
 fermatStrongProbablePrime :: Integer -> Bool
 fermatStrongProbablePrime n = pred1 || pred2
   where
@@ -53,14 +53,16 @@ lucasStrongProbablePrime n = case selfredgeParams n of
     Just (d, p, q) -> pred1 d p q || pred2 d p q
     Nothing        -> False
   where
-    pred1 d p q = let (u, _) = lucasNumber d' n d p q in u == 0
-    pred2 d p q =
-        any (\k -> snd (lucasNumber k n d p q) == 0) $ map (\r -> d' * 2 ^ r) rs
+    pred1 d p q = let (u, _) = lucasNumber d' n (d, p, q) in u == 0
+    pred2 d p q = any (\k -> snd (lucasNumber k n (d, p, q)) == 0)
+        $ map (\r -> d' * 2 ^ r) rs
     dn      = n + 1
     (d', s) = halveUntilOdd dn
     rs      = [0 .. s - 1]
 
-
+-- |Uses method proposed by Selfredge to select parameters D, P, and Q for a Lucas prp test.
+-- In selecting these parameters, this method may determine that the given integer is composite,
+-- in which case it returns Nothing
 selfredgeParams :: Integer -> Maybe (Integer, Integer, Integer)
 selfredgeParams n = go n [5, -7, 9]
   where
@@ -74,8 +76,8 @@ selfredgeParams n = go n [5, -7, 9]
 
 
 lucasNumber
-    :: Integer -> Integer -> Integer -> Integer -> Integer -> (Integer, Integer)
-lucasNumber n m d p q = foldr ($) (1, 1) indices
+    :: Integer -> Integer -> (Integer, Integer, Integer) -> (Integer, Integer)
+lucasNumber n m (d, p, q) = foldr ($) (1, 1) indices
   where
     indices = unfoldr doubleOrAddOne n
     doubleOrAddOne m | m == 1    = Nothing
@@ -104,7 +106,7 @@ halveUntilOdd :: Integer -> (Integer, Integer)
 halveUntilOdd n =
     head $ dropWhile (even . fst) [ (n `div` 2 ^ s, s) | s <- [1 ..] ]
 
-
+-- |Performs fast modular exponentiation
 modExp :: Integer -> Integer -> Integer -> Integer
 modExp base exp modulo = modExp' (base `mod` modulo) exp modulo 1
   where
@@ -114,7 +116,7 @@ modExp base exp modulo = modExp' (base `mod` modulo) exp modulo 1
                               m
                               (if even e then r else (r * b `mod` m))
 
-
+-- |Tests whether a given positive integer is a perfect square using Newton's method
 isSquare :: Integer -> Bool
 isSquare n = case isqrt of
     Just (rt, _) -> rt * rt == n
